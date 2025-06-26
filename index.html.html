@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>1950, 희망을 찾아서 - 방탈출</title>
+    <style>
+        /* CSS는 이전과 동일하여 생략... */
+        body,html{margin:0;padding:0;width:100%;height:100%;background-color:#1a1a1a;color:#fff;font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;overflow:hidden;display:flex;justify-content:center;align-items:center}#timer-display{position:fixed;top:20px;left:50%;transform:translateX(-50%);background-color:rgba(0,0,0,.8);padding:10px 25px;border-radius:10px;font-size:1.8em;font-weight:700;color:#f1c40f;font-family:'Courier New',Courier,monospace;z-index:100;border:2px solid #555}#start-screen{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;width:100%;height:100%;background-color:#2c3e50}#start-screen h1{font-size:2.5em;color:#f1c40f;margin-bottom:10px}#start-screen h2{font-size:1.2em;color:#ecf0f1;margin-top:0;margin-bottom:40px}.input-group{margin-bottom:20px}.input-group label{margin-right:10px;font-size:1.1em}.input-group input{padding:10px;font-size:1em;border-radius:5px;border:none;width:100px;text-align:center}#start-button{padding:15px 40px;font-size:1.5em;font-weight:700;border:none;border-radius:10px;color:#fff;background-color:#27ae60;cursor:pointer;transition:background-color .3s}#start-button:hover{background-color:#2ecc71}#game-container{position:relative;max-width:1280px;max-height:720px;width:100%;aspect-ratio:1280/720}#game-container img{width:100%;height:100%;display:block}.hidden{display:none!important}#modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.85);display:flex;justify-content:center;align-items:center;z-index:1000;padding:15px;box-sizing:border-box}#modal-content{background-color:#2c3e50;padding:25px;border-radius:15px;width:90%;max-width:500px;text-align:center;border:3px solid #bdc3c7;box-shadow:0 0 25px rgba(255,255,255,.1)}#modal-title{margin-top:0;color:#f1c40f;font-size:1.5em}#modal-body div,#modal-body h3,#modal-body p{font-size:1.1em;line-height:1.6}#modal-content input,#modal-content textarea{padding:12px;margin:15px 0;width:80%;border-radius:5px;border:1px solid #777;background-color:#ecf0f1;font-size:1em;text-align:center;color:#333;box-sizing:border-box}#modal-content textarea{text-align:left;height:100px}#modal-content button{padding:12px 25px;border-radius:8px;border:none;background-color:#27ae60;color:#fff;cursor:pointer;font-size:1em;margin:5px;transition:background-color .3s}#modal-content button:hover{background-color:#2ecc71}#modal-content button.close-btn{background-color:#c0392b}#modal-content button.close-btn:hover{background-color:#e74c3c}#clue-display{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background-color:rgba(0,0,0,.85);padding:15px 25px;border-radius:10px;font-size:1.6em;border:2px solid #555;z-index:50;text-align:center}#clue-slots{letter-spacing:15px;font-family:'Courier New',Courier,monospace;font-weight:700;color:#f1c40f;font-size:1.2em}#memory-game-board{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px auto;max-width:300px}.card{width:80px;height:80px;background-color:#34495e;border:2px solid #fff;border-radius:8px;cursor:pointer;position:relative;transform-style:preserve-3d;transition:transform .6s}.card.flipped{transform:rotateY(180deg)}.card-face{position:absolute;width:100%;height:100%;-webkit-backface-visibility:hidden;backface-visibility:hidden;display:flex;justify-content:center;align-items:center;font-size:2.5em;border-radius:6px}.card-front{background-color:#34495e}.card-back{background-color:#95a5a6;transform:rotateY(180deg)}.card.matched{border-color:#27ae60;cursor:default;transform:rotateY(180deg);opacity:.7}
+    </style>
+</head>
+<body>
+    <div id="start-screen">
+        <!-- 시작 화면 HTML (변경 없음) -->
+        <h1>1950, 희망을 찾아서</h1><h2>참가자 정보를 입력하고 게임을 시작하세요.</h2><div class="input-group"><label for="student-grade">학년:</label><input type="number" id="student-grade" placeholder="예: 6"><label for="student-class">반:</label><input type="number" id="student-class" placeholder="예: 1"></div><div class="input-group"><label for="student-name">이름:</label><input type="text" id="student-name" placeholder="예: 홍길동"></div><button id="start-button">게임 시작</button>
+    </div>
+    <div id="timer-display" class="hidden">00:00</div>
+    <div id="game-container" class="hidden">
+        <!-- 게임 화면 HTML (변경 없음) -->
+        <img src="https://i.ibb.co/kRJxvdK/Whisk-ty1ntdhmzc.jpg" alt="음악실 배경" usemap="#gamemap"><map name="gamemap"><area shape="rect" coords="85,80,180,170" href="#" alt="왼쪽 위 액자" onclick="showEvent('frame')"><area shape="rect" coords="90,370,610,510" href="#" alt="키보드" onclick="showEvent('keyboard')"><area shape="rect" coords="0,350,220,620" href="#" alt="왼쪽 스피커" onclick="showEvent('speaker')"><area shape="rect" coords="680,450,870,850" href="#" alt="오른쪽 기타" onclick="showEvent('guitar')"><area shape="rect" coords="430,135,570,335" href="#" alt="중앙 액자" onclick="showEvent('final_lock')"></map>
+    </div>
+    <div id="modal-overlay" class="hidden">
+        <div id="modal-content">
+            <h2 id="modal-title"></h2>
+            <div id="modal-body"></div>
+            <div id="modal-buttons"></div> <!-- 버튼 영역을 따로 만듦 -->
+        </div>
+    </div>
+    <div id="clue-display" class="hidden"><div>희망의 암호</div><div id="clue-slots">____</div></div>
+
+    <script>
+        // --- JavaScript 게임 로직 ---
+
+        // ===== 1. Apps Script URL을 여기에 붙여넣으세요! =====
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzREJ6P_aQdM4vdteaGbXU_68p1Cn67974ikg34GnRuigIq0VEADICHsAfK-ICcXzakGw/exec"; 
+        
+        // HTML 요소 (modalButtons 추가)
+        const startScreen = document.getElementById('start-screen'), startButton = document.getElementById('start-button'), gameContainer = document.getElementById('game-container'), clueDisplay = document.getElementById('clue-display'), timerDisplay = document.getElementById('timer-display'), modalOverlay = document.getElementById('modal-overlay'), modalTitle = document.getElementById('modal-title'), modalBody = document.getElementById('modal-body'), modalButtons = document.getElementById('modal-buttons'), clueSlots = document.getElementById('clue-slots');
+        
+        // 게임 상태 관리 (finalTime 추가)
+        let timerInterval = null;
+        const gameState = { startTime: 0, finalTime: '', playerGrade: '', playerClass: '', playerName: '', clues: { frame: null, keyboard: null, speaker: null, guitar: null }, password: ['_', '_', '_', '_'] };
+
+        // startGame, updateTimer, showEvent, checkAnswer, updateClueDisplay 함수는 이전과 동일
+        function startGame(){const e=document.getElementById("student-grade"),t=document.getElementById("student-class"),n=document.getElementById("student-name");if(""===n.value.trim())return alert("이름을 입력해주세요!"),void n.focus();gameState.playerGrade=e.value||"미입력",gameState.playerClass=t.value||"미입력",gameState.playerName=n.value.trim(),gameState.startTime=Date.now(),timerInterval=setInterval(updateTimer,1e3),startScreen.classList.add("hidden"),gameContainer.classList.remove("hidden"),clueDisplay.classList.remove("hidden"),timerDisplay.classList.remove("hidden")}function updateTimer(){const e=Date.now()-gameState.startTime,t=Math.floor(e/1e3%60),n=Math.floor(e/6e4%60);timerDisplay.innerText=`${String(n).padStart(2,"0")}:${String(t).padStart(2,"0")}`}startButton.addEventListener("click",startGame);function showEvent(e){if(gameState.clues[e]&&"final_lock"!==e)return void alert("이곳에서는 더 이상 찾을 것이 없습니다.");switch(modalOverlay.classList.remove("hidden"),modalButtons.innerHTML='<button class="close-btn" onclick="closeModal()">닫기</button>',e){case"frame":modalTitle.innerText="낡은 액자",modalBody.innerHTML="<p>먼지 낀 액자 속에는 비둘기 그림이 있다...</p><p>자세히 보니 '소원'이라는 단어에서 <strong>숫자 0</strong>이 보이는 것 같다.</p>",gameState.clues.frame||(gameState.clues.frame="0",updateClueDisplay());break;case"keyboard":modalTitle.innerText="🎹 건반의 질문",modalBody.innerHTML='<p>휴전 협정이 맺어진 해는 1953년입니다.</p><p><strong>문제:</strong> 이 해의 마지막 두 숫자를 서로 빼면(큰 수 - 작은 수) 얼마일까요?</p><input type="number" id="keyboard-answer" placeholder="정답을 입력하세요"><button onclick="checkAnswer(\'keyboard\', document.getElementById(\'keyboard-answer\').value)">확인</button>';break;case"speaker":modalTitle.innerText="🔊 기억력 시험",modalBody.innerHTML="<p>스피커에서 지지직거리는 소리가 들린다...</p><p>같은 그림 카드를 찾아 짝을 맞추세요!</p><div id=\"memory-game-board\"></div>",initMemoryGame();break;case"guitar":modalTitle.innerText="🎸 기타에 남겨진 숫자",modalBody.innerHTML='<p>기타 몸체에 희미하게 글자가 새겨져 있다...</p><p>"군번 1234-63. 꼭 돌아간다."</p><p><strong>문제:</strong> 군번의 마지막 두 숫자를 더하면 얼마일까요?</p><input type="number" id="guitar-answer" placeholder="정답을 입력하세요"><button onclick="checkAnswer(\'guitar\', document.getElementById(\'guitar-answer\').value)">확인</button>';break;case"final_lock":modalTitle.innerText="🔐 희망의 문",modalBody.innerHTML='<p>지금까지 찾은 4개의 희망의 암호를 순서대로 입력하면 문이 열릴 것이다.</p><input type="text" id="final-password" placeholder="비밀번호 4자리" maxlength="4" style="letter-spacing: 5px;"><button onclick="checkFinalPassword()">열기</button>'}}function checkAnswer(e,t){let n=!1,s=null;("keyboard"!==e||2!==parseInt(t))&&("guitar"!==e||9!==parseInt(t))||(n=!0,s="keyboard"===e?"2":"9"),n?(alert("정답입니다! 희망의 암호 조각을 찾았습니다!"),gameState.clues[e]=s,closeModal(),updateClueDisplay()):alert("틀렸습니다. 다시 한번 생각해보세요.")}function updateClueDisplay(){gameState.clues.frame&&(gameState.password[0]=gameState.clues.frame),gameState.clues.keyboard&&(gameState.password[1]=gameState.clues.keyboard),gameState.clues.speaker&&(gameState.password[2]=gameState.clues.speaker),gameState.clues.guitar&&(gameState.password[3]=gameState.clues.guitar),clueSlots.innerText=gameState.password.join("")}
+
+        // ===== 2. 최종 비밀번호 확인 및 성공 화면 구성 (수정됨) =====
+        function checkFinalPassword() {
+            if (document.getElementById('final-password').value === '0229') {
+                clearInterval(timerInterval);
+                timerDisplay.classList.add('hidden');
+
+                const elapsedTime = Date.now() - gameState.startTime;
+                const minutes = Math.floor(elapsedTime / 60000);
+                const seconds = Math.floor((elapsedTime % 60000) / 1000);
+                gameState.finalTime = `${minutes}분 ${seconds}초`; // 소요시간 저장
+
+                modalTitle.innerText = "🎉 탈출 성공! 🎉";
+                modalBody.innerHTML = `
+                    <div style="text-align: left; padding: 0 10%;">
+                        <h3 style="text-align: center;">- 클리어 기록 -</h3>
+                        <p><strong>참가자:</strong> ${gameState.playerGrade}학년 ${gameState.playerClass}반 ${gameState.playerName}</p>
+                        <p><strong>소요 시간:</strong> ${gameState.finalTime}</p>
+                    </div><hr>
+                    <h3 style="margin-top: 20px;">게임 참여 소감</h3>
+                    <textarea id="feedback-text" placeholder="재미있었던 점이나 느낀 점을 자유롭게 적어주세요."></textarea>
+                `;
+                // 버튼 영역을 새로 구성
+                modalButtons.innerHTML = `
+                    <button id="submit-btn" onclick="submitFeedback()">기록 저장하기</button>
+                    <button class="close-btn" onclick="window.location.reload()">다시하기</button>
+                `;
+            } else {
+                alert('비밀번호가 맞지 않습니다. 암호를 다시 확인해보세요.');
+            }
+        }
+        
+        // ===== 3. 구글 시트로 데이터 전송 함수 (새로 추가) =====
+        function submitFeedback() {
+            const feedbackText = document.getElementById('feedback-text').value;
+            const submitButton = document.getElementById('submit-btn');
+
+            // 버튼 비활성화 (중복 제출 방지)
+            submitButton.disabled = true;
+            submitButton.innerText = "저장 중...";
+
+            const data = {
+                grade: gameState.playerGrade,
+                class: gameState.playerClass,
+                name: gameState.playerName,
+                time: gameState.finalTime,
+                feedback: feedbackText
+            };
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // 중요: no-cors 모드로 변경
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                // no-cors 모드에서는 상세한 응답을 받을 수 없지만, 요청 자체는 보내집니다.
+                alert('기록이 성공적으로 제출되었습니다!');
+                submitButton.innerText = "저장 완료";
+            })
+            .catch(error => {
+                alert('오류가 발생하여 기록 저장에 실패했습니다.');
+                console.error('Error!', error.message);
+                submitButton.disabled = false;
+                submitButton.innerText = "기록 저장하기";
+            });
+        }
+
+        function closeModal() {
+            modalOverlay.classList.add('hidden');
+        }
+
+        // 메모리 게임 로직 (변경 없음)
+        let memoryGameActive=!1,flippedCards=[],matchedPairs=0;function initMemoryGame(){memoryGameActive=!0,flippedCards=[],matchedPairs=0;const e=document.getElementById("memory-game-board");e.innerHTML="";const t=["🇰🇷","🕊️","🌺","🇰🇷","🕊️","🌺"];for(let n=t.length-1;n>0;n--){const s=Math.floor(Math.random()*(n+1));[t[n],t[s]]=[t[s],t[n]]}t.forEach(t=>{const n=document.createElement("div");n.classList.add("card"),n.dataset.symbol=t,n.innerHTML='<div class="card-face card-front"></div><div class="card-face card-back">'+t+"</div>",n.addEventListener("click",()=>flipCard(n)),e.appendChild(n)})}function flipCard(e){if(memoryGameActive&&flippedCards.length<2&&!e.classList.contains("flipped"))e.classList.add("flipped"),flippedCards.push(e),2===flippedCards.length&&checkForMatch()}function checkForMatch(){const[e,t]=flippedCards;e.dataset.symbol===t.dataset.symbol?(e.classList.add("matched"),t.classList.add("matched"),matchedPairs++,flippedCards=[],3===matchedPairs&&(memoryGameActive=!1,setTimeout(()=>{alert("성공! 스피커에서 희미한 목소리가 들린다... '희망의 세 번째 숫자는... 2...'"),gameState.clues.speaker="2",closeModal(),updateClueDisplay()},500))):(memoryGameActive=!1,setTimeout(()=>{e.classList.remove("flipped"),t.classList.remove("flipped"),flippedCards=[],memoryGameActive=!0},1e3))}
+    </script>
+</body>
+</html>
